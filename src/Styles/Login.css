@@ -1,0 +1,57 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 640px) {
+    
+    .min-h-screen {
+      padding: 20px;
+    }
+    
+    .bg-left-section {
+      padding: 20px;
+    }
+    
+    .bg-left-section form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .bg-left-section form  {
+      width: 100%;
+    }
+    
+    .bg-left-section form .w-full {
+      width: 100%;
+    }
+    
+    .bg-left-section form button {
+      width: 100%;
+    }
+  }
+  
+  /* Common styles
+.bg-left-section {
+  background-color: #E5F3FF;
+  padding: 44px 88px;
+}
+.loginButton{
+  display: block;
+}
+
+}
+
+/* Mobile styles */
+.loginButton{
+   border-bottom: 1px solid grey;
+   
+    width: 100%;
+    align-self: stretch;
+} 
+
+ @media (max-width:768){
+  #containerLeft{
+    padding:80px 10px
+  }
+ }

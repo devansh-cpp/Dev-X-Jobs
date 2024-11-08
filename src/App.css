@@ -1,0 +1,572 @@
+
+.text-bg {
+  background-image: url("../src/assets/images/highlightss.png");
+  background-size: cover;
+}
+.Text-bg {
+  background-image: url("../src/assets/images/highlights2.png");
+
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position-y: bottom;
+}
+ 
+ 
+ 
+ 
+
+.left-content {
+  align-items: left;
+  justify-content: center;
+  flex-direction: column;
+  display: flex;
+  gap: 24px;
+  padding-right: 64px;
+}
+
+.highlight {
+  color: rgb(209, 16, 209);
+}
+
+
+ 
+ 
+.banner {
+  background-image: url("../src/assets/images/BootcampBg.png");
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 40vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100%;
+}
+.banner .btn-primary {
+  margin-top: 16px;
+}
+
+@media (max-width: 480px) {
+  .boxes-container {
+    display: none;
+  }
+}
+/* Bootcamp section */
+.bootcamp {
+  display: flex;
+  margin: 120px 64px;
+  justify-content: center;
+        display: flex;
+        align-items: center;
+       
+}
+.bootCampWrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.BootCamp-Text {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #f88204;
+
+  font-size: 56px;
+  font-weight: bold;
+}
+.Bootcamp-para {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  font-size: 38px;
+}
+.btn-primary {
+  background-color: #ff8605;
+  color: white;
+  display: block;
+  justify-content: center;
+  font-weight: 500;
+  margin-right: 17px;
+  align-items: center;
+
+  font-size: 34px;
+  text-align: center;
+  width: 200px;
+  height: auto;
+  border-radius: 12px;
+
+  border: none;
+}
+.bootcamp-info {
+  margin-top: 8%;
+
+  display: flex;
+  flex-direction: column;
+}
+.programinfo-para {
+  margin-top: 40px;
+  font-size: 32px;
+  margin-bottom: 30px;
+ 
+}
+.Btn-Rear {
+  background-color: #cfe3f9;
+  border: none;
+  height: 50px;
+  border-radius: 10px;
+  width: 330px;
+  font-size: 26px;
+  font-weight: 500;
+}
+.Btn-Rear:hover {
+  background-color: #103059;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* Mock Test Section */
+
+.mockTest {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 60px 64px;
+  gap: 64px;
+}
+.mockTestTitle {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+.mockTestContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.mtTests {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+}
+.mtTest {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  width: 100%;
+  padding-right: 64px;
+  padding-left: 64px;
+}
+.mtImg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  object-fit: cover;
+}
+.mtImg img {
+  width: 100%;
+  height: auto;
+}
+
+/* instructor section */
+.instructor {
+  display: flex;
+  width: 80%;
+  background-color: #cfe3f9;
+  border-radius: 24px;
+  padding-left: 64px;
+  padding-top: 64px;
+
+  padding-bottom: 64px;
+
+  background-color: #faf5ff;
+}
+.instructorImg img {
+  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  
+}
+.instructorInfo {
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.instructorInfo p {
+  padding-right: 64px;
+  padding-left: 64px;
+  font-size: 1.2rem;
+}
+.instructorDetails {
+  background-color: #ecdeff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 64px;
+  align-items: flex-start;
+}
+.instructorDetails h3 {
+  font-size: 3rem;
+  font-weight: 400;
+  color: #103059;
+}
+.instructorDetails p {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: rgb(114, 114, 114);
+  padding: 0;
+}
+/* Footer */
+.footer {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 120px 64px;
+  gap: 64px;
+  align-self: stretch;
+}
+.footerBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.footerTop {
+  display: flex;
+  align-self: stretch;
+  justify-content: space-between;
+  width: 100%;
+  gap: 64px;
+}
+.footerLinks {
+  display: flex;
+  gap: 48px;
+}
+.footerLinkGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 16px;
+}
+.footerLinkGroup a {
+  text-decoration: none;
+  color: black;
+}
+.Bold {
+  font-weight: 700;
+}
+/* Community */
+.joinInput {
+  display: flex;
+  background-color: white;
+  border: 1px solid #103059;
+  border-radius: 6px;
+  overflow: hidden;
+  justify-content: space-between;
+}
+.btn-Join {
+  background-color: #103059;
+  color: white;
+  border-radius: 4px;
+  border: none;
+  width: 40%;
+}
+.joinInput input {
+  border: none;
+  padding: 8px;
+  width: 100%;
+}
+.community {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+
+
+  
+
+/* Tablet View */
+@media (max-width: 1024px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  .boxes-container-Phone {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 16px;
+
+  }
+  .boxes-container {
+    display: none;
+    height: 0px;
+    opacity: 0;
+  }
+  h1 {
+    align-items: center;
+    justify-content: center;
+  }
+  .description-content {
+    font-size: 1rem;
+  }
+
+  .btn-member {
+    width: 100%;
+    margin: 8px 0;
+  }
+  .container-name {
+    flex-direction: column;
+  }
+  .mockTest {
+    margin: 64px 16px;
+  }
+  /* Footer */
+  .footer {
+    width: 100%;
+    margin: 64px 16px;
+    align-items: flex-start;
+    padding: 0px 16px;
+  }
+  .footerTop {
+    flex-direction: column;
+  }
+  .community {
+    align-items: flex-start;
+  }
+  /* Instructor section */
+  .instructor{
+
+    flex-direction: column;
+    width: 80%;
+    padding: 16px;
+    padding-left: 0;
+    padding-right: 0;
+}
+.instructorImg{
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+
+}
+.instructorDetails {
+ 
+  padding: 8px 16px;
+  align-items: center;
+}
+.instructorInfo p {
+  padding-right: 16px;
+  padding-left: 16px;
+  font-size: 1.2rem;
+}
+.instructorDetails h3{
+text-align: center;
+}
+/* bootcamp  */
+.bootcamp{
+  margin: 64px 16px;
+  justify-content: center;
+        display: flex;
+        align-items: center;
+        margin: 64px 16px;
+}
+.bootCampWrapper {
+  display: grid;
+  grid-template-columns: repeat(1,1fr);
+}
+.bootcamp-info {
+  
+  align-items: center;
+}
+/* Hero section */
+.hero {
+  flex-direction: column;
+  padding: 64px 16px;
+  gap: 32px;
+}
+.left-content  {
+
+  align-items: center;
+  padding-right: 0;
+}
+.heroTitle {
+  
+  align-items: center;
+  text-align: center;
+}
+.mtImg{
+  display: none;
+}
+.mockTestContainer {
+  
+  background-image: url('../src/assets/images/Javabootcamp.png');
+  display: block;
+
+  
+}
+.instructor img{
+  border-radius: 24px;
+    width: 60%;
+    height: 40%;
+   
+}
+
+}
+
+/* Mobile View */
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.2rem;
+  }
+  .BootCamp-Text {
+    font-size: 34px;
+  }
+  .members-item {
+  
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+  }
+  .btn-secondary {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .boxes-container-Phone{
+    gap: 8px;
+  }
+
+  
+  .btn-primary {
+    width: 160px;
+    font-size: 26px;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+  }
+  .Bootcamp-para {
+    font-size: 32px;
+  }
+  .banner {
+    height: 30vh;
+    width: 100%;
+  }
+  .description-content {
+    font-size: 0.9rem;
+  }
+  h1 {
+    font-size: 2.1rem;
+    text-align: center;
+  }
+  .left-content {
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+  }
+  .description-content {
+    text-align: center;
+  }
+  p {
+    font-size: 1.2rem;
+    text-align: center;
+    width: 100%;
+  }
+  .btn-container {
+    width: 100%;
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 1px;
+  }
+
+  .members {
+    text-align: center;
+  }
+
+  .btn-member {
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  .bootcamp-info h1 {
+    display: flex;
+    font-size: 1.8rem;
+    margin-bottom: 0px;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+  }
+  .bootcamp-info {
+    margin: 0;
+   
+    width: 100%;
+  }
+.mockTestContainer .mtImg{
+  display: none;
+}
+.mockTestContainer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  background-image: url('../src/assets/images/Javabootcamp.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+
+  
+}
+.mtTests{
+  padding: 0;
+  width: 90%;
+}
+.mtTest{
+  padding: 0;
+}
+  .programinfo-para {
+    font-size: 1.45rem;
+    margin: 0px;
+    text-align: center;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .btn-rear {
+    width: 100%;
+    padding: 12px;
+  }
+  /* footer */
+  .footerLinks {
+    flex-direction: column;
+  }
+  .footerBottom {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+  .mockTest {
+    
+    margin: 64px 16px;
+  
+}
+.instructor img{
+  border-radius: 24px;
+    width: 60%;
+    height: 100%;
+}
+
+}
