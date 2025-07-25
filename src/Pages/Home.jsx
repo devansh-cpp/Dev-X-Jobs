@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import HeroImg from "../assets/images/offcampushero.webp";
+import HeroImg from "../assets/images/hero.png";
 import { Link } from "react-router-dom";
 
 function Test() {
   return (
     <>
-      <div className="px-5 mt-16 mx-auto bg-[#E1E9ED]">
+      <div className="px-5 mt-16 mx-auto h-screen bg-[#E1E9ED]">
         <div className="flex justify-between">
           <div className="md:block hidden left-side w-1/2">
-            <img src={HeroImg} className="h-[700px]" alt="Hero" />
+            <img src={HeroImg} className="h-[910px]" alt="Hero" />
           </div>
 
           <div className="right-side sm:pr-12 sm:py-0 py-12 sm:w-1/2 flex flex-col justify-center sm:items-end items-center gap-2">

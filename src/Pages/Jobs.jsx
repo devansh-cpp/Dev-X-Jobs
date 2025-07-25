@@ -13,6 +13,7 @@ export default function Jobs() {
   const [selectedBatch, setSelectedBatch] = useState(null); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchJobs();
@@ -20,45 +21,79 @@ export default function Jobs() {
 
   const fetchJobs = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get('https://script.google.com/macros/s/AKfycbylQspLXBPnRQc-a1o45newgjQY5kNEAVKYTaW_rurq9d9BrUxWqg_bKLAvy_tuRJtD0w/exec');
-      setData(response.data.data);
-      setLoading(false); // Update loading state
+      
+      // Add null checks and default values
+      const jobsData = response.data?.data || [];
+      setData(jobsData);
     } catch (error) {
       console.error('Error fetching data:', error);
-      setLoading(false); // Update loading state
+      setError('Failed to load jobs. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
   const filteredJobs = data
     .filter(job => {
-      const jobTitle = job.Job_Title.toLowerCase();
-      const type = job.Type.toLowerCase();
+      // Add null checks for job properties
+      if (!job) return false;
+      
+      const jobTitle = (job.Job_Title || '').toLowerCase();
+      const type = (job.Type || '').toLowerCase();
+      const batch = job.Batch || '';
 
       const jobMatchesSearch = jobTitle.includes(searchQuery.toLowerCase());
       const typeMatchesFilter = !filterType || type === filterType;
 
       let batchMatchesFilter = true;
-      if (filterType === 'jobs') {
-        // Check if selectedBatch matches any batch in the job's Batch field
-        if (selectedBatch !== null) {
-          const selectedBatchString = `${selectedBatch}`;
-          batchMatchesFilter = job.Batch.includes(selectedBatchString);
-        }
+      if (filterType === 'jobs' && selectedBatch !== null) {
+        const selectedBatchString = `${selectedBatch}`;
+        batchMatchesFilter = batch.toString().includes(selectedBatchString);
       }
 
       return jobMatchesSearch && typeMatchesFilter && batchMatchesFilter;
     })
-    .sort((a, b) => new Date(b.Date_Posting) - new Date(a.Date_Posting)); // Sort by date
+    .sort((a, b) => {
+      // Add null checks for date sorting
+      const dateA = a.Date_Posting ? new Date(a.Date_Posting) : new Date(0);
+      const dateB = b.Date_Posting ? new Date(b.Date_Posting) : new Date(0);
+      return dateB - dateA;
+    });
 
   const handleCategoryClick = category => {
-    setFilterType(category === 'job' ? 'jobs' : 'internships');
+    // Fix the filter type assignment
+    if (category === 'job') {
+      setFilterType('jobs');
+    } else if (category === 'internship') {
+      setFilterType('internships');
+    }
     setSelectedBatch(null); // Reset selected batch when changing filter category
   };
 
-  const handleSearch = () => {
-    // Implement more advanced search functionality here if needed
-    // For now, it filters based on the searchQuery state
+  const handleBatchClick = (batch) => {
+    setSelectedBatch(batch);
   };
+
+  const handleClearFilters = () => {
+    setFilterType(null);
+    setSelectedBatch(null);
+    setSearchQuery('');
+  };
+
+  const handleSearch = () => {
+    // The filtering is already handled in the filteredJobs computation
+    // This function can be used for additional search logic if needed
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Generate batch years (2020-2028)
+  const batchYears = Array.from({ length: 9 }, (_, i) => 2020 + i);
 
   return (
     <>
@@ -78,143 +113,330 @@ export default function Jobs() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border-2 border-gray-300 rounded-l-lg px-2 py-2 w-2/5"
+            className="border-2 border-gray-300 rounded-l-lg px-4 py-2 w-2/5 focus:outline-none focus:border-blue-500"
             placeholder="Search for jobs or companies..."
           />
           <button
             onClick={handleSearch}
-            className="bg-blue-900 text-white px-4 py-2 rounded-r-lg ml-2 hover:bg-blue-600"
+            className="bg-blue-900 text-white px-6 py-2 rounded-r-lg hover:bg-blue-700 transition-colors"
           >
             Search
           </button>
         </div>
 
+        {/* Mobile Search Bar */}
+        <div className='sm:hidden mb-4'>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border-2 border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:border-blue-500"
+            placeholder="Search for jobs or companies..."
+          />
+        </div>
+
         {/* Mobile Filter Button */}
-        <div className='filters mt-8 block sm:hidden'>
-          <button
-            className='bg-neutral-50 bg-opacity-15 border-2 px-2 py-1 rounded-full text-blue-900 font-bold mr-3 flex justify-center items-center'
-            onClick={() => setIsModalOpen(true)}
-          >
-            <FiFilter className='mr-2' /> Filters
-          </button>
+        <div className='filters mt-4 mb-6 block sm:hidden'>
+          <div className="flex gap-2">
+            <button
+              className='bg-blue-50 border-2 border-blue-200 px-4 py-2 rounded-full text-blue-900 font-semibold flex justify-center items-center hover:bg-blue-100 transition-colors'
+              onClick={() => setIsModalOpen(true)}
+            >
+              <FiFilter className='mr-2' /> Filters
+            </button>
+            {(filterType || selectedBatch) && (
+              <button
+                className='bg-red-50 border-2 border-red-200 px-4 py-2 rounded-full text-red-700 font-semibold hover:bg-red-100 transition-colors'
+                onClick={handleClearFilters}
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+          
+          {/* Active filters display */}
+          {(filterType || selectedBatch) && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {filterType && (
+                <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                  {filterType === 'jobs' ? 'Jobs' : 'Internships'}
+                </span>
+              )}
+              {selectedBatch && (
+                <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                  {selectedBatch} Batch
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Modal for mobile filters */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-5 rounded-lg w-full mx-2 sm:w-1/2">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Filters</h2>
-                <IoClose className="text-2xl cursor-pointer" onClick={() => setIsModalOpen(false)} />
+            <div className="bg-white p-6 rounded-lg w-full mx-4 max-w-md max-h-[80vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-gray-800">Filters</h2>
+                <IoClose 
+                  className="text-2xl cursor-pointer text-gray-600 hover:text-gray-800" 
+                  onClick={closeModal} 
+                />
               </div>
-              <div className="flex flex-col">
-                <h3
-                  className={`hover:underline cursor-pointer mb-2 ${filterType === 'job' ? 'text-blue-500' : 'text-gray-700'}`}
-                  onClick={() => handleCategoryClick('job')}
-                >
-                  Jobs
-                </h3>
-                <h3
-                  className={`hover:underline cursor-pointer mb-2 ${filterType === 'internship' ? 'text-blue-500' : 'text-gray-700'}`}
-                  onClick={() => handleCategoryClick('internship')}
-                >
-                  Internships
-                </h3>
-                {filterType === 'jobs' && (
-                  <div className="flex flex-col mt-4">
-                    {Array.from({ length: 9 }, (_, i) => 2020 + i).map(batch => (
-                      <h3
-                        key={batch}
-                        className={`hover:underline cursor-pointer mb-2 ${selectedBatch === batch ? 'text-blue-500' : 'text-gray-700'}`}
-                        onClick={() => setSelectedBatch(batch)}
-                      >
-                        {batch} Batch Jobs
-                      </h3>
-                    ))}
-                    <h3
-                      className={`hover:underline cursor-pointer mb-2 ${selectedBatch === null ? 'text-blue-500' : 'text-gray-700'}`}
-                      onClick={() => setSelectedBatch(null)}
+              
+              <div className="space-y-4">
+                <div>
+                  <h3 className="font-semibold text-gray-700 mb-3 text-lg">Category</h3>
+                  <div className="space-y-2">
+                    <button
+                      className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                        filterType === 'jobs' 
+                          ? 'bg-blue-100 text-blue-800 border-2 border-blue-300' 
+                          : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:bg-gray-100'
+                      }`}
+                      onClick={() => handleCategoryClick('job')}
                     >
-                      All Jobs
-                    </h3>
+                      Jobs
+                    </button>
+                    <button
+                      className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                        filterType === 'internships' 
+                          ? 'bg-blue-100 text-blue-800 border-2 border-blue-300' 
+                          : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:bg-gray-100'
+                      }`}
+                      onClick={() => handleCategoryClick('internship')}
+                    >
+                      Internships
+                    </button>
+                  </div>
+                </div>
+
+                {filterType === 'jobs' && (
+                  <div>
+                    <h3 className="font-semibold text-gray-700 mb-3 text-lg">Batch Year</h3>
+                    <div className="space-y-2">
+                      <button
+                        className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                          selectedBatch === null 
+                            ? 'bg-green-100 text-green-800 border-2 border-green-300' 
+                            : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:bg-gray-100'
+                        }`}
+                        onClick={() => handleBatchClick(null)}
+                      >
+                        All Batches
+                      </button>
+                      {batchYears.map(batch => (
+                        <button
+                          key={batch}
+                          className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                            selectedBatch === batch 
+                              ? 'bg-green-100 text-green-800 border-2 border-green-300' 
+                              : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:bg-gray-100'
+                          }`}
+                          onClick={() => handleBatchClick(batch)}
+                        >
+                          {batch} Batch
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
+
+                <div className="pt-4 border-t border-gray-200">
+                  <button
+                    className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                    onClick={handleClearFilters}
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         )}
 
         <div className="grid sm:grid-cols-12 gap-8">
-          <div className="col-span-3 hidden sm:block rounded-lg border-1 border-gray-500 shadow-md overflow-hidden bg-[#F0F8FF]">
-            <div className="flex flex-col justify-start">
-              <div className="Jobs">
-                <div className="available-jobs text-blue-700">
-                  <div className="flex flex-col p-4 border-r-2 border-gray-200">
-                    <h3
-                      className={`hover:underline text-xl font-semibold text-blue-900 cursor-pointer mb-2 ${filterType === 'job' ? 'text-blue-500' : 'text-gray-700'}`}
-                      onClick={() => handleCategoryClick('job')}
+          {/* Desktop Sidebar Filters */}
+          <div className="col-span-3 hidden sm:block">
+            <div className="sticky top-4 rounded-lg border border-gray-300 shadow-lg overflow-hidden bg-[#F0F8FF]">
+              <div className="p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-bold text-blue-900">Filters</h2>
+                  {(filterType || selectedBatch) && (
+                    <button
+                      className="text-sm text-red-600 hover:text-red-800 underline"
+                      onClick={handleClearFilters}
                     >
-                      Jobs
-                    </h3>
-                    <h3
-                      className={`hover:underline text-xl font-semibold text-blue-900 cursor-pointer mb-2 ${filterType === 'internship' ? 'text-blue-500' : 'text-gray-700'}`}
-                      onClick={() => handleCategoryClick('internship')}
-                    >
-                      Internships
-                    </h3>
-                    {filterType === 'jobs' && (
-                      <div className="flex flex-col mt-4">
-                        {Array.from({ length: 9 }, (_, i) => 2020 + i).map(batch => (
-                          <h3
-                            key={batch}
-                            className={`hover:underline cursor-pointer mb-2 ${selectedBatch === batch ? 'text-blue-500' : 'text-gray-700'}`}
-                            onClick={() => setSelectedBatch(batch)}
-                          >
-                            {batch} Batch Jobs
-                          </h3>
-                        ))}
-                        <h3
-                          className={`hover:underline cursor-pointer mb-2 ${selectedBatch === null ? 'text-blue-500' : 'text-gray-700'}`}
-                          onClick={() => setSelectedBatch(null)}
-                        >
-                          All Jobs
-                        </h3>
-                      </div>
-                    )}
-                  </div>
+                      Clear All
+                    </button>
+                  )}
                 </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold text-blue-900 mb-3 text-lg">Category</h3>
+                    <div className="space-y-2">
+                      <button
+                        className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                          filterType === 'jobs' 
+                            ? 'bg-blue-200 text-blue-900 font-semibold' 
+                            : 'text-blue-800 hover:bg-blue-100'
+                        }`}
+                        onClick={() => handleCategoryClick('job')}
+                      >
+                        Jobs
+                      </button>
+                      <button
+                        className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                          filterType === 'internships' 
+                            ? 'bg-blue-200 text-blue-900 font-semibold' 
+                            : 'text-blue-800 hover:bg-blue-100'
+                        }`}
+                        onClick={() => handleCategoryClick('internship')}
+                      >
+                        Internships
+                      </button>
+                    </div>
+                  </div>
+
+                  {filterType === 'jobs' && (
+                    <div>
+                      <h3 className="font-semibold text-blue-900 mb-3 text-lg">Batch Year</h3>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        <button
+                          className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                            selectedBatch === null 
+                              ? 'bg-green-200 text-green-900 font-semibold' 
+                              : 'text-blue-800 hover:bg-blue-100'
+                          }`}
+                          onClick={() => handleBatchClick(null)}
+                        >
+                          All Batches
+                        </button>
+                        {batchYears.map(batch => (
+                          <button
+                            key={batch}
+                            className={`block w-full text-left px-4 py-2 rounded-lg transition-colors ${
+                              selectedBatch === batch 
+                                ? 'bg-green-200 text-green-900 font-semibold' 
+                                : 'text-blue-800 hover:bg-blue-100'
+                            }`}
+                            onClick={() => handleBatchClick(batch)}
+                          >
+                            {batch} Batch
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Active filters summary */}
+                {(filterType || selectedBatch) && (
+                  <div className="mt-6 pt-4 border-t border-blue-200">
+                    <h4 className="font-semibold text-blue-900 mb-2">Active Filters:</h4>
+                    <div className="space-y-1 text-sm">
+                      {filterType && (
+                        <div className="text-blue-700">
+                          Category: {filterType === 'jobs' ? 'Jobs' : 'Internships'}
+                        </div>
+                      )}
+                      {selectedBatch && (
+                        <div className="text-blue-700">
+                          Batch: {selectedBatch}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
+          {/* Main Content */}
           <div className="col-span-1 sm:col-span-7">
-            {/* Render JobCards */}
-            {loading ? (
-              <div className="text-center">Loading...</div>
-            ) : filteredJobs.length > 0 ? (
-              filteredJobs.map((job, index) => (
-                <div key={index}>
-                  <Link to={`/${job.jobId}`}>
-                    <JobCard
-                      jobTitle={job.Job_Title}
-                      companyName={job.Company_Name}
-                      experience={job.Experience}
-                      salary={job.Package_CTC}
-                      location={job.Job_Location}
-                      qualification={job.Eligibility}
-                      datePosted={job.Date_Posting}
-                      jobId={job.jobId} // Pass job ID to JobCard
-                    />
-                  </Link>
+            {/* Results count */}
+            <div className="mb-4 text-gray-600">
+              {!loading && (
+                <p>
+                  Showing {filteredJobs.length} {filteredJobs.length === 1 ? 'result' : 'results'}
+                  {searchQuery && ` for "${searchQuery}"`}
+                </p>
+              )}
+            </div>
+
+            {/* Error State */}
+            {error && (
+              <div className="text-center py-8">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-red-700">
+                  <p className="font-semibold mb-2">Error Loading Jobs</p>
+                  <p>{error}</p>
+                  <button 
+                    onClick={fetchJobs}
+                    className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                  >
+                    Retry
+                  </button>
                 </div>
-              ))
-            ) : (
-              <div className="text-center text-gray-500">No records found</div>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading && !error && (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <p className="mt-4 text-gray-600">Loading jobs...</p>
+              </div>
+            )}
+
+            {/* Job Results */}
+            {!loading && !error && (
+              <>
+                {filteredJobs.length > 0 ? (
+                  <div className="space-y-4">
+                    {filteredJobs.map((job, index) => (
+                      <div key={job.jobId || index}>
+                        <Link to={`/${job.jobId}`} className="block hover:shadow-lg transition-shadow">
+                          <JobCard
+                            jobTitle={job.Job_Title || 'N/A'}
+                            companyName={job.Company_Name || 'N/A'}
+                            experience={job.Experience || 'N/A'}
+                            salary={job.Package_CTC || 'N/A'}
+                            location={job.Job_Location || 'N/A'}
+                            qualification={job.Eligibility || 'N/A'}
+                            datePosted={job.Date_Posting || 'N/A'}
+                            jobId={job.jobId}
+                          />
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="bg-gray-50 rounded-lg p-8">
+                      <p className="text-gray-500 text-lg mb-4">No jobs found</p>
+                      <p className="text-gray-400 mb-4">
+                        {filterType || selectedBatch || searchQuery 
+                          ? 'Try adjusting your filters or search terms.' 
+                          : 'No jobs are currently available.'}
+                      </p>
+                      {(filterType || selectedBatch || searchQuery) && (
+                        <button
+                          onClick={handleClearFilters}
+                          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          Clear Filters
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
 
+          {/* Right Sidebar (placeholder) */}
           <div className="col-span-2 hidden sm:block">
-           
+            {/* You can add additional content here like ads, related links, etc. */}
           </div>
         </div>
       </div>
